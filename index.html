@@ -3,166 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hitung Gaji Anak-anak</title>
+<title>Hitung Gaji Karyawan</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-    :root {
-        --primary: #2563eb;
-        --primary-dark: #1e4ec9;
-        --bg: #f3f4f6;
-        --card: #ffffff;
-        --radius: 14px;
-        --shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
     body {
+        font-family: Arial, sans-serif;
+        background: #f5f6fa;
         margin: 0;
-        background: var(--bg);
-        font-family: "Segoe UI", Arial, sans-serif;
         padding: 20px;
     }
 
     .container {
-        max-width: 500px;
+        max-width: 700px;
+        background: white;
+        padding: 20px;
         margin: auto;
-    }
-
-    .card {
-        background: var(--card);
-        border-radius: var(--radius);
-        padding: 25px;
-        box-shadow: var(--shadow);
-        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h2 {
-        margin-top: 0;
-        font-size: 22px;
         text-align: center;
-        color: #111827;
+        margin-bottom: 20px;
     }
 
     label {
-        font-weight: 600;
-        color: #374151;
+        font-weight: bold;
+        margin-top: 10px;
         display: block;
-        margin-bottom: 6px;
-        font-size: 14px;
     }
 
     input {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 10px;
-        font-size: 15px;
-        margin-bottom: 15px;
-        transition: 0.2s;
-    }
-
-    input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        outline: none;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
     }
 
     button {
         width: 100%;
-        padding: 14px;
-        border: none;
-        background: var(--primary);
-        color: white;
+        padding: 12px;
+        margin-top: 15px;
         font-size: 16px;
         font-weight: bold;
-        border-radius: 10px;
+        background: #2e86de;
+        color: white;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
-        margin-top: 5px;
-        transition: 0.2s;
     }
+
     button:hover {
-        background: var(--primary-dark);
+        background: #1e6acb;
     }
 
-    .btn-green {
-        background: #10b981;
-    }
-    .btn-green:hover {
-        background: #0d9a6e;
+    #pdfBtn {
+        background: #27ae60;
     }
 
-    pre {
-        white-space: pre-wrap;
-        padding: 20px;
-        background: var(--card);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        font-size: 14px;
-        line-height: 1.6;
+    #pdfBtn:hover {
+        background: #1f8d4d;
     }
 
+    /* RESPONSIVE TABLE */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+    }
+
+    table th, table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+        background: white;
+    }
+
+    table th {
+        background: #f0f3f7;
+        font-weight: bold;
+    }
+
+    iframe {
+        width: 100%;
+        height: 450px;
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
 </style>
+
 </head>
 <body>
 
 <div class="container">
-    <div class="card">
-        <h2>Hitung Gaji Anak-anak</h2>
+    <h2>Hitung Gaji Karyawan</h2>
 
-        <label>Nama</label>
-        <input id="nama" placeholder="Misal: Budi">
+    <label>Nama</label>
+    <input type="text" id="nama">
 
-        <label>Berapa kali berangkat</label>
-        <input id="hari" type="number" placeholder="Misal: 14">
+    <label>Hari Kerja</label>
+    <input type="number" id="hari">
 
-        <label>Gaji per hari</label>
-        <input id="gaji" type="number" placeholder="Misal: 120000">
+    <label>Gaji Harian (Rp)</label>
+    <input type="number" id="gaji">
 
-        <label>Bon</label>
-        <input id="bon" type="number" placeholder="Misal: 100000">
+    <label>Bon (Rp)</label>
+    <input type="number" id="bon">
 
-        <button onclick="tambahOrang()">+ Tambah Orang</button>
-        <button class="btn-green" onclick="downloadTXT()">Download TXT</button>
+    <button onclick="tambahData()">Tambah Data</button>
+
+    <!-- TABLE RESPONSIVE WRAPPER -->
+    <div class="table-responsive" id="tableBox" style="display:none;">
+        <table id="tabelData">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>Hari</th>
+                    <th>Gaji Harian</th>
+                    <th>Uang Makan</th>
+                    <th>Bon</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
-    <pre id="output">Belum ada data...</pre>
+    <button id="pdfBtn" onclick="generatePDF()" style="display:none;">Generate PDF</button>
+
+    <iframe id="pdfPreview"></iframe>
 </div>
 
-
 <script>
-let hasil = "";
-const uangMakan = 50000;
+let dataKaryawan = [];
+let lastPDF = null;
 
-function formatRupiah(x) {
-    return "Rp " + x.toLocaleString("id-ID");
+function formatRupiah(angka) {
+    return "Rp " + angka.toLocaleString("id-ID");
 }
 
-function tambahOrang() {
-    const nama = document.getElementById("nama").value.trim();
-    const hari = parseInt(document.getElementById("hari").value);
-    const gaji = parseInt(document.getElementById("gaji").value);
-    const bon  = parseInt(document.getElementById("bon").value || 0);
-
+function tambahData() {
+    const nama   = document.getElementById("nama").value;
+    const hari   = parseFloat(document.getElementById("hari").value);
+    const gaji   = parseInt(document.getElementById("gaji").value);
+    const bon    = parseInt(document.getElementById("bon").value || 0);
+    
     if (!nama || !hari || !gaji) {
-        alert("Isi semua data om!");
+        alert("Isi dulu semua datanya om!");
         return;
     }
 
-    const totalGaji = (hari * gaji) - (hari * uangMakan) - bon;
+    const uangMakan = hari * 50000;
+    const total = (hari * gaji) + uangMakan - bon;
 
-    const paragraf = 
-`Nama        : ${nama}
-Berangkat   : ${hari} hari
-Gaji Pokok  : ${formatRupiah(gaji)} × ${hari} = ${formatRupiah(hari * gaji)}
-Uang Makan  : ${formatRupiah(uangMakan)} × ${hari} = ${formatRupiah(hari * uangMakan)}
-Bon         : ${formatRupiah(bon)}
------------------------------------
-Total Gaji  : ${formatRupiah(totalGaji)}
-===================================
+    dataKaryawan.push({
+        nama, hari, gaji, uangMakan, bon, total
+    });
 
-`;
-
-    hasil += paragraf;
-    document.getElementById("output").textContent = hasil;
+    renderTable();
 
     document.getElementById("nama").value = "";
     document.getElementById("hari").value = "";
@@ -170,21 +183,62 @@ Total Gaji  : ${formatRupiah(totalGaji)}
     document.getElementById("bon").value = "";
 }
 
-function downloadTXT() {
-    if (!hasil.trim()) {
-        alert("Belum ada data om!");
-        return;
-    }
+function renderTable() {
+    const tbody = document.querySelector("#tabelData tbody");
+    tbody.innerHTML = "";
 
-    const blob = new Blob([hasil], { type: "text/plain" });
+    dataKaryawan.forEach((d, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${i+1}</td>
+                <td>${d.nama}</td>
+                <td>${d.hari}</td>
+                <td>${formatRupiah(d.gaji)}</td>
+                <td>${formatRupiah(d.uangMakan)}</td>
+                <td>${formatRupiah(d.bon)}</td>
+                <td>${formatRupiah(d.total)}</td>
+            </tr>`;
+    });
+
+    document.getElementById("tableBox").style.display = "block";
+    document.getElementById("pdfBtn").style.display = "block";
+}
+
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("p", "mm", "a4");
+
+    doc.setFont("Helvetica");
+    doc.setFontSize(14);
+    doc.text("Laporan Gaji Karyawan", 105, 15, { align: "center" });
+
+    let y = 30;
+
+    dataKaryawan.forEach((d, i) => {
+        const text = 
+`${i+1}. ${d.nama}
+Hari kerja : ${d.hari}
+Gaji harian : ${formatRupiah(d.gaji)}
+Uang makan : ${formatRupiah(d.uangMakan)}
+Bon : ${formatRupiah(d.bon)}
+Total gaji : ${formatRupiah(d.total)}
+-----------------------------`;
+
+        const lines = doc.splitTextToSize(text, 180);
+        doc.text(lines, 15, y);
+        y += lines.length * 7;
+
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+    });
+
+    const blob = doc.output("blob");
+    lastPDF = blob;
+
     const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "hasil-gaji.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
+    document.getElementById("pdfPreview").src = url;
 }
 </script>
 
