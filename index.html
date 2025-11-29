@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hitung Gaji Anak-anak</title>
+
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1e4ec9;
+        --bg: #f3f4f6;
+        --card: #ffffff;
+        --radius: 14px;
+        --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    body {
+        margin: 0;
+        background: var(--bg);
+        font-family: "Segoe UI", Arial, sans-serif;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 500px;
+        margin: auto;
+    }
+
+    .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 25px;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        margin-top: 0;
+        font-size: 22px;
+        text-align: center;
+        color: #111827;
+    }
+
+    label {
+        font-weight: 600;
+        color: #374151;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 15px;
+        margin-bottom: 15px;
+        transition: 0.2s;
+    }
+
+    input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        background: var(--primary);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 5px;
+        transition: 0.2s;
+    }
+    button:hover {
+        background: var(--primary-dark);
+    }
+
+    .btn-green {
+        background: #10b981;
+    }
+    .btn-green:hover {
+        background: #0d9a6e;
+    }
+
+    pre {
+        white-space: pre-wrap;
+        padding: 20px;
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>Hitung Gaji Anak-anak</h2>
+
+        <label>Nama</label>
+        <input id="nama" placeholder="Misal: Budi">
+
+        <label>Berapa kali berangkat</label>
+        <input id="hari" type="number" placeholder="Misal: 14">
+
+        <label>Gaji per hari</label>
+        <input id="gaji" type="number" placeholder="Misal: 120000">
+
+        <label>Bon</label>
+        <input id="bon" type="number" placeholder="Misal: 100000">
+
+        <button onclick="tambahOrang()">+ Tambah Orang</button>
+        <button class="btn-green" onclick="downloadTXT()">Download TXT</button>
+    </div>
+
+    <pre id="output">Belum ada data...</pre>
+</div>
+
+
+<script>
+let hasil = "";
+const uangMakan = 50000;
+
+function formatRupiah(x) {
+    return "Rp " + x.toLocaleString("id-ID");
+}
+
+function tambahOrang() {
+    const nama = document.getElementById("nama").value.trim();
+    const hari = parseInt(document.getElementById("hari").value);
+    const gaji = parseInt(document.getElementById("gaji").value);
+    const bon  = parseInt(document.getElementById("bon").value || 0);
+
+    if (!nama || !hari || !gaji) {
+        alert("Isi semua data om!");
+        return;
+    }
+
+    const totalGaji = (hari * gaji) - (hari * uangMakan) - bon;
+
+    const paragraf = 
+`Nama        : ${nama}
+Berangkat   : ${hari} hari
+Gaji Pokok  : ${formatRupiah(gaji)} × ${hari} = ${formatRupiah(hari * gaji)}
+Uang Makan  : ${formatRupiah(uangMakan)} × ${hari} = ${formatRupiah(hari * uangMakan)}
+Bon         : ${formatRupiah(bon)}
+-----------------------------------
+Total Gaji  : ${formatRupiah(totalGaji)}
+===================================
+
+`;
+
+    hasil += paragraf;
+    document.getElementById("output").textContent = hasil;
+
+    document.getElementById("nama").value = "";
+    document.getElementById("hari").value = "";
+    document.getElementById("gaji").value = "";
+    document.getElementById("bon").value = "";
+}
+
+function downloadTXT() {
+    if (!hasil.trim()) {
+        alert("Belum ada data om!");
+        return;
+    }
+
+    const blob = new Blob([hasil], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "hasil-gaji.txt";
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
