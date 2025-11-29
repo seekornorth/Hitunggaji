@@ -57,23 +57,13 @@
         cursor: pointer;
     }
 
-    button:hover {
-        background: #1e6acb;
-    }
-
     #pdfBtn {
         background: #27ae60;
     }
 
-    #pdfBtn:hover {
-        background: #1f8d4d;
-    }
-
-    /* RESPONSIVE TABLE */
     .table-responsive {
         width: 100%;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         margin-top: 20px;
         border-radius: 8px;
         border: 1px solid #ddd;
@@ -85,14 +75,14 @@
         border-collapse: collapse;
     }
 
-    table th, table td {
+    th, td {
         border: 1px solid #ccc;
         padding: 8px;
         text-align: center;
         background: white;
     }
 
-    table th {
+    th {
         background: #f0f3f7;
         font-weight: bold;
     }
@@ -126,7 +116,6 @@
 
     <button onclick="tambahData()">Tambah Data</button>
 
-    <!-- TABLE RESPONSIVE WRAPPER -->
     <div class="table-responsive" id="tableBox" style="display:none;">
         <table id="tabelData">
             <thead>
@@ -168,8 +157,9 @@ function tambahData() {
         return;
     }
 
+    // RUMUS FINAL
     const uangMakan = hari * 50000;
-    const total = (hari * gaji) + uangMakan - bon;
+    const total = (gaji * hari) - uangMakan - bon;
 
     dataKaryawan.push({
         nama, hari, gaji, uangMakan, bon, total
